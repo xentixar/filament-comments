@@ -44,12 +44,13 @@ php artisan migrate
 
 ### Adding Comments to Your Models
 
-To enable comments on your model, use the `HasFilamentComment` trait:
+To enable comments on your model, use the `HasFilamentComment` trait and implement `Commentable` contract:
 
 ```php
 use Xentixar\FilamentComment\Models\Traits\HasFilamentComment;
+use Xentixar\FilamentComment\Contracts\Commentable;
 
-class Post extends Model
+class Post extends Model implements Commentable
 {
     use HasFilamentComment;
     
