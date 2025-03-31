@@ -5,6 +5,17 @@ namespace Xentixar\FilamentComment\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int $commentable_id
+ * @property string $commentable_type
+ * @property string $body
+ * @property int|null $parent_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ */
 class FilamentComment extends Model
 {
     use SoftDeletes;

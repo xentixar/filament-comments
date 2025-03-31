@@ -9,7 +9,9 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Illuminate\View\View;
 use Livewire\Component;
+use Xentixar\FilamentComment\Contracts\Commentable;
 
 class AddComment extends Component implements HasForms, HasActions
 {
@@ -19,11 +21,11 @@ class AddComment extends Component implements HasForms, HasActions
         'body' => null,
     ];
 
-    public $record;
+    public Commentable $record;
 
     public ?bool $isOpen = false;
 
-    public function mount($record): void
+    public function mount(Commentable $record): void
     {
         $this->record = $record;
     }
@@ -59,8 +61,8 @@ class AddComment extends Component implements HasForms, HasActions
             ->send();
     }
 
-    public function render()
+    public function render(): View
     {
-        return view('filament-comments::livewire.add-comment');
+        return view('filament-comments::livewire.add-comment'); //@phpstan-ignore-line
     }
 }

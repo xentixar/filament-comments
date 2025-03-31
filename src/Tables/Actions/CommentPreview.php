@@ -22,7 +22,7 @@ class CommentPreview extends Action
             ->modalHeading(__('filament-comments::filament-comments.comment-preview.label'))
             ->modalWidth(MaxWidth::FiveExtraLarge)
             ->modalContent(function(){
-                return view('filament-comments::components.comment-preview', [
+                return view('filament-comments::components.comment-preview', [ //@phpstan-ignore-line
                     'record' => $this->getRecord(),
                 ]);
             });

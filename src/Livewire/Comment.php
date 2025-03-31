@@ -35,7 +35,7 @@ class Comment extends Component implements HasActions, HasForms
 
     public function getAvatarUrl(): string
     {
-        $user = $this->comment->user;
+        $user = $this->comment->user()->first();
 
         if (method_exists($user, 'getFilamentAvatarUrl')) {
             return $user->getFilamentAvatarUrl();
@@ -46,7 +46,7 @@ class Comment extends Component implements HasActions, HasForms
 
     public function render(): View
     {
-        return view('filament-comments::livewire.comment');
+        return view('filament-comments::livewire.comment'); //@phpstan-ignore-line
     }
 
     public function form(Form $form): Form
@@ -66,7 +66,7 @@ class Comment extends Component implements HasActions, HasForms
     }
 
     public function create(){
-        $this->form->validate();
+        $this->form->validate(); //@phpstan-ignore-line
 
         $comment = $this->comment;
 

@@ -2,24 +2,32 @@
 
 namespace Xentixar\FilamentComment\Livewire;
 
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\View\View;
 use Livewire\Component;
+use Xentixar\FilamentComment\Contracts\Commentable;
 
 class ListComments extends Component
 {
-    public $comments;
-    public $record;
+    public Collection $comments;
+    public Commentable $record;
 
-    public $offset = 0;
-    public $limit = 5;
-    public $showMore = false;
-    public $showLess = false;
+    public int $offset = 0;
+    public int $limit = 5;
+    public bool $showMore = false;
+    public bool $showLess = false;
 
     public $listeners = [
         'refreshComments' => '$refresh',
         'commentAdded' => 'reloadComments',
     ];
 
-    public function reloadComments()
+    /**
+     * Refresh the comments list.
+     *
+     * @return void
+     */
+    public function reloadComments(): void
     {
         $totalComments = $this->getComments();
         $this->comments = $totalComments->slice($this->offset, $this->limit);
@@ -27,21 +35,21 @@ class ListComments extends Component
         $this->showLess = $this->offset > 0;
     }
 
-    public function getComments()
+    /**
+     * Get the comments for the record.
+     * @return Collection
+     */
+    public function getComments(): Collection
     {
         return $this->record->comments()->where('parent_id', null)->with('user')->latest()->get();
     }
 
-    public function mount($record)
-    {
-        $this->record = $record;
-        $totalComments = $this->getComments();
-        $this->comments = $totalComments->slice($this->offset, $this->limit);
-        $this->showMore = $totalComments->count() > $this->limit;
-        $this->showLess = $this->offset > 0;
-    }
-
-    public function loadMore()
+    /**
+     * Load more comments.
+     *
+     * @return void
+     */
+    public function loadMore(): void
     {
         $this->offset += $this->limit;
         $totalComments = $this->getComments();
@@ -49,8 +57,13 @@ class ListComments extends Component
         $this->showMore = $totalComments->count() > ($this->offset + $this->limit);
         $this->showLess = $this->offset > 0;
     }
-    
-    public function loadLess()
+
+    /**
+     * Load less comments.
+     *
+     * @return void
+     */
+    public function loadLess(): void
     {
         $this->offset -= $this->limit;
         $totalComments = $this->getComments();
@@ -59,8 +72,17 @@ class ListComments extends Component
         $this->showLess = $this->offset > 0;
     }
 
-    public function render()
+    public function mount(Commentable $record): void
     {
-        return view('filament-comments::livewire.list-comments');
+        $this->record = $record;
+        $totalComments = $this->getComments();
+        $this->comments = $totalComments->slice($this->offset, $this->limit);
+        $this->showMore = $totalComments->count() > $this->limit;
+        $this->showLess = $this->offset > 0;
+    }
+
+    public function render(): View
+    {
+        return view('filament-comments::livewire.list-comments'); //@phpstan-ignore-line
     }
 }
