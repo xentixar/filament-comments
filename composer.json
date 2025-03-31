@@ -1,0 +1,29 @@
+{
+    "name": "xentixar/filament-comments",
+    "type": "library",
+    "require": {
+        "filament/support": "^3.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Xentixar\\FilamentComment\\": "src/",
+            "Xentixar\\FilamentComment\\Database\\Factories\\": "database/factories/",
+            "Xentixar\\FilamentComment\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "authors": [
+        {
+            "name": "xentixar",
+            "email": "xentixar@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Xentixar\\FilamentComment\\FilamentCommentServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev"
+}

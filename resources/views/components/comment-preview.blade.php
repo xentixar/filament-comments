@@ -1,0 +1,1 @@
+<livewire:list-comments :record="$record ?? $this->record" />
