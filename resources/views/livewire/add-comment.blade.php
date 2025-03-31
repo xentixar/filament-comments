@@ -10,7 +10,7 @@
             </x-filament::button>
         </form>
     @else
-        <x-filament::button outlined wire:click="$set('isOpen', true)" class="mt-6">
+        <x-filament::button size="sm" outlined wire:click="$set('isOpen', true)" class="mt-6">
             {{ __('Add a comment') }}
         </x-filament::button>
     @endif

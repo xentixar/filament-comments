@@ -16,8 +16,16 @@ class ListComments extends Component
 
     public $listeners = [
         'refreshComments' => '$refresh',
-        'commentAdded' => 'getComments',
+        'commentAdded' => 'reloadComments',
     ];
+
+    public function reloadComments()
+    {
+        $totalComments = $this->getComments();
+        $this->comments = $totalComments->slice($this->offset, $this->limit);
+        $this->showMore = $totalComments->count() > $this->limit;
+        $this->showLess = $this->offset > 0;
+    }
 
     public function getComments()
     {

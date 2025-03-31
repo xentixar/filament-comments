@@ -1,18 +1,26 @@
 <div>
-    @foreach ($comments as $comment)
-        @livewire('comment', ['comment' => $comment], key($comment->id))
-    @endforeach
-    @if($showMore)
-        <span wire:click="loadMore" class="text-xs cursor-pointer">
-            Load More...
-        </span>
+    @if ($comments->isNotEmpty())
+        @foreach ($comments as $comment)
+            @livewire('comment', ['comment' => $comment], key($comment->id))
+        @endforeach
+        <div class="flex justify-end gap-2 items-center">
+            @if ($showLess)
+                <x-filament::button outlined color="info" size="sm" class="mt-4" wire:click="loadLess">
+                    <x-filament::icon icon="heroicon-o-arrow-left" class="w-4 h-4 ml-1 inline" wire:loading.remove
+                        wire:target="loadLess" />
+                    <span>Previous</span>
+                </x-filament::button>
+            @endif
+            @if ($showMore)
+                <x-filament::button outlined color="success" size="sm" class="mt-4" wire:click="loadMore">
+                    <span>Next</span>
+                    <x-filament::icon icon="heroicon-o-arrow-right" class="w-4 h-4 ml-1 inline" wire:loading.remove
+                        wire:target="loadMore" />
+                </x-filament::button>
+            @endif
+        </div>
     @endif
-    @if($showLess)
-        <span wire:click="loadLess" class="text-xs cursor-pointer">
-            Show Less...
-        </span>
-    @endif
-    @if($comments->isEmpty())
+    @if ($comments->isEmpty())
         <p class="text-center">No comments available.</p>
     @endif
     @livewire('add-comment', ['record' => $record])
