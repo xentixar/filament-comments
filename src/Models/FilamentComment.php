@@ -3,6 +3,9 @@
 namespace Xentixar\FilamentComment\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -35,32 +38,32 @@ class FilamentComment extends Model
         'parent_id',
     ];
 
-    public function commentable()
+    public function commentable(): MorphTo
     {
         return $this->morphTo();
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(config('filament-comments.user.model', \App\Models\User::class));
     }
 
-    public function parent()
+    public function parent(): BelongsTo
     {
         return $this->belongsTo(FilamentComment::class, 'parent_id');
     }
 
-    public function replies()
+    public function replies(): HasMany
     {
         return $this->hasMany(FilamentComment::class, 'parent_id');
     }
 
-    public function activities()
+    public function activities(): HasMany
     {
         return $this->hasMany(FilamentCommentActivity::class, 'comment_id');
     }
 
-    public function addActivity($type)
+    public function addActivity(string $type): bool
     {
         $activities = $this->activities();
 
@@ -78,7 +81,7 @@ class FilamentComment extends Model
         return false;
     }
 
-    public function getActivityType()
+    public function getActivityType(): string
     {
         return $this->activities()->where('user_id', auth()->id())->first()?->activity_type->value ?? '';
     }

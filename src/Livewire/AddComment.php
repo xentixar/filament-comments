@@ -44,7 +44,7 @@ class AddComment extends Component implements HasActions, HasForms
             ->columns(1);
     }
 
-    public function create()
+    public function create(): void
     {
         $this->validate();
 

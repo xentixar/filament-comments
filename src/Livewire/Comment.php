@@ -64,7 +64,7 @@ class Comment extends Component implements HasActions, HasForms
             ->columns(1);
     }
 
-    public function create()
+    public function create(): void
     {
         $this->form->validate(); // @phpstan-ignore-line
 

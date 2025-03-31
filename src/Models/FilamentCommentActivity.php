@@ -3,9 +3,19 @@
 namespace Xentixar\FilamentComment\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Xentixar\FilamentComment\Enums\FilamentCommentActivityType;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int $comment_id
+ * @property FilamentCommentActivityType $activity_type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ */
 class FilamentCommentActivity extends Model
 {
     use SoftDeletes;
@@ -29,12 +39,12 @@ class FilamentCommentActivity extends Model
         'activity_type' => FilamentCommentActivityType::class,
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(config('filament-comments.user.model'));
     }
 
-    public function comment()
+    public function comment(): BelongsTo
     {
         return $this->belongsTo(FilamentComment::class, 'comment_id');
     }
