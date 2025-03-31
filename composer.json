@@ -1,14 +1,12 @@
 {
     "name": "xentixar/filament-comments",
-    "type": "library",
-    "require": {
-        "filament/support": "^3.0"
-    },
+    "description": "A powerful comments system for Filament admin panel, allowing you to add commenting functionality to your Filament resources.",
     "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "Xentixar\\FilamentComment\\": "src/"
-        }
+    "type": "library",
+    "homepage": "https://github.com/xentixar/filament-comments",
+    "support": {
+        "issues": "https://github.com/xentixar/filament-comments/issues",
+        "source": "https://github.com/xentixar/filament-comments"
     },
     "authors": [
         {
@@ -17,6 +15,20 @@
             "role": "Software Engineer"
         }
     ],
+    "keywords": [
+        "laravel",
+        "filament",
+        "comments",
+        "plugin"
+    ],
+    "require": {
+        "filament/support": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Xentixar\\FilamentComment\\": "src/"
+        }
+    },
     "extra": {
         "laravel": {
             "providers": [
