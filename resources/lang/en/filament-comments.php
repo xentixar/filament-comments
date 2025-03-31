@@ -2,7 +2,7 @@
 
 return [
     'comment-preview' => [
-        'label' => 'Preview',
+        'label' => 'Preview Comments',
         'description' => 'Preview comments for this record',
     ]
 ];

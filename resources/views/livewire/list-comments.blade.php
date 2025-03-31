@@ -2,20 +2,18 @@
     @foreach ($comments as $comment)
         @livewire('comment', ['comment' => $comment], key($comment->id))
     @endforeach
-    {{-- @if ($comments->hasMorePages())
-        <div class="flex justify-center mt-4">
-            <x-filament::button wire:click="loadMore" wire:loading.attr="disabled" wire:target="loadMore">
-                {{ __('Load more') }}
-            </x-filament::button>
-        </div>
+    @if($showMore)
+        <span wire:click="loadMore" class="text-xs cursor-pointer">
+            Load More...
+        </span>
     @endif
-    @if ($comments->isEmpty())
-        <div class="text-center mt-4">
-            <p class="text-gray-500">{{ __('No comments yet.') }}</p>
-        </div>
+    @if($showLess)
+        <span wire:click="loadLess" class="text-xs cursor-pointer">
+            Show Less...
+        </span>
     @endif
-    <div wire:loading class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50">
-        <x-filament::loading-indicator />
-    </div> --}}
+    @if($comments->isEmpty())
+        <p class="text-center">No comments available.</p>
+    @endif
     @livewire('add-comment', ['record' => $record])
 </div>

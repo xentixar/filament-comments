@@ -18,6 +18,7 @@ class CommentPreview extends Action
             ->icon('heroicon-o-chat-bubble-left-right')
             ->color('info')
             ->modal()
+            ->slideOver()
             ->modalCancelAction(false)
             ->modalSubmitAction(false)
             ->modalHeading(__('filament-comments::filament-comments.comment-preview.label'))
