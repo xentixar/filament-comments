@@ -7,8 +7,6 @@ use Filament\Tables\Actions\Action;
 
 class CommentPreview extends Action
 {
-    // protected string $view = 'filament-comments::tables.actions.add-comment';
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -34,24 +32,4 @@ class CommentPreview extends Action
     {
         return 'addComment';
     }
-
-    // public function getCommentable(): mixed
-    // {
-    //     return $this->getRecord();
-    // }
-
-    // public function getCommentableType(): string
-    // {
-    //     return $this->getRecord()::class;
-    // }
-
-    // public function getCommentableId(): int
-    // {
-    //     return $this->getRecord()->getKey();
-    // }
-
-    // public function getCommentableRoute(): string
-    // {
-    //     return $this->getRecord()::getResource()::getUrl('edit', ['record' => $this->getRecord()]);
-    // }
 }

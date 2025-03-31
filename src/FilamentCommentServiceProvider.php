@@ -20,8 +20,7 @@ class FilamentCommentServiceProvider extends PackageServiceProvider
                     ->copyAndRegisterServiceProviderInApp()
                     ->publishConfigFile()
                     ->publishMigrations()
-                    ->askToRunMigrations()
-                    ->askToStarRepoOnGitHub('spatie/laravel-dynamic-servers');
+                    ->askToRunMigrations();
             });
 
         $package

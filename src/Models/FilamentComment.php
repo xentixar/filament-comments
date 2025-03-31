@@ -36,17 +36,17 @@ class FilamentComment extends Model
 
     public function parent()
     {
-        return $this->belongsTo(config('filament-comments.comment.model', FilamentComment::class));
+        return $this->belongsTo(FilamentComment::class, 'parent_id');
     }
 
     public function replies()
     {
-        return $this->hasMany(config('filament-comments.comment.model', FilamentComment::class), 'parent_id');
+        return $this->hasMany(FilamentComment::class, 'parent_id');
     }
 
     public function activities()
     {
-        return $this->hasMany(config('filament-comments.activity.model', FilamentCommentActivity::class), 'comment_id');
+        return $this->hasMany(FilamentCommentActivity::class, 'comment_id');
     }
 
     public function addActivity($type)

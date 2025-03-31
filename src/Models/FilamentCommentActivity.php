@@ -36,6 +36,6 @@ class FilamentCommentActivity extends Model
 
     public function comment()
     {
-        return $this->belongsTo(config('filament-comments.comment.model'));
+        return $this->belongsTo(FilamentComment::class, 'comment_id');
     }
 }
