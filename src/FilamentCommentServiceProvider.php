@@ -36,7 +36,7 @@ class FilamentCommentServiceProvider extends PackageServiceProvider
     {
         parent::boot();
 
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'filament-comments');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'filament-comments');
 
         Livewire::component('list-comments', \Xentixar\FilamentComment\Livewire\ListComments::class);
         Livewire::component('comment', \Xentixar\FilamentComment\Livewire\Comment::class);

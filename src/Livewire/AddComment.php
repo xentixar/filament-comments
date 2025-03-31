@@ -13,9 +13,9 @@ use Illuminate\View\View;
 use Livewire\Component;
 use Xentixar\FilamentComment\Contracts\Commentable;
 
-class AddComment extends Component implements HasForms, HasActions
+class AddComment extends Component implements HasActions, HasForms
 {
-    use InteractsWithForms, InteractsWithActions;
+    use InteractsWithActions, InteractsWithForms;
 
     public ?array $data = [
         'body' => null,
@@ -43,7 +43,7 @@ class AddComment extends Component implements HasForms, HasActions
             ])->statePath('data')
             ->columns(1);
     }
-    
+
     public function create()
     {
         $this->validate();
@@ -63,6 +63,6 @@ class AddComment extends Component implements HasForms, HasActions
 
     public function render(): View
     {
-        return view('filament-comments::livewire.add-comment'); //@phpstan-ignore-line
+        return view('filament-comments::livewire.add-comment'); // @phpstan-ignore-line
     }
 }

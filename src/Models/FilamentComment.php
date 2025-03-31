@@ -64,15 +64,17 @@ class FilamentComment extends Model
     {
         $activities = $this->activities();
 
-        if($this->getActivityType() !== $type) {
+        if ($this->getActivityType() !== $type) {
             $activities->where('user_id', auth()->id())->delete();
             $activities->create([
                 'user_id' => auth()->id(),
                 'activity_type' => $type,
             ]);
+
             return true;
         }
         $activities->where('user_id', auth()->id())->delete();
+
         return false;
     }
 

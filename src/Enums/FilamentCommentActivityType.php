@@ -6,7 +6,7 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
-enum FilamentCommentActivityType: string implements HasColor, HasLabel, HasIcon
+enum FilamentCommentActivityType: string implements HasColor, HasIcon, HasLabel
 {
     case LIKED = 'liked';
     case DISLIKED = 'disliked';

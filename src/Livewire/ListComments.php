@@ -10,11 +10,15 @@ use Xentixar\FilamentComment\Contracts\Commentable;
 class ListComments extends Component
 {
     public Collection $comments;
+
     public Commentable $record;
 
     public int $offset = 0;
+
     public int $limit = 5;
+
     public bool $showMore = false;
+
     public bool $showLess = false;
 
     public $listeners = [
@@ -24,8 +28,6 @@ class ListComments extends Component
 
     /**
      * Refresh the comments list.
-     *
-     * @return void
      */
     public function reloadComments(): void
     {
@@ -37,7 +39,6 @@ class ListComments extends Component
 
     /**
      * Get the comments for the record.
-     * @return Collection
      */
     public function getComments(): Collection
     {
@@ -46,8 +47,6 @@ class ListComments extends Component
 
     /**
      * Load more comments.
-     *
-     * @return void
      */
     public function loadMore(): void
     {
@@ -60,8 +59,6 @@ class ListComments extends Component
 
     /**
      * Load less comments.
-     *
-     * @return void
      */
     public function loadLess(): void
     {
@@ -83,6 +80,6 @@ class ListComments extends Component
 
     public function render(): View
     {
-        return view('filament-comments::livewire.list-comments'); //@phpstan-ignore-line
+        return view('filament-comments::livewire.list-comments'); // @phpstan-ignore-line
     }
 }

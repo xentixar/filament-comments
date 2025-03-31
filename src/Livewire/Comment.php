@@ -6,7 +6,6 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -40,13 +39,13 @@ class Comment extends Component implements HasActions, HasForms
         if (method_exists($user, 'getFilamentAvatarUrl')) {
             return $user->getFilamentAvatarUrl();
         } else {
-            return "https://ui-avatars.com/api/?background=000&color=fff&name=" . str_replace(" ", "+", $user->name);
+            return 'https://ui-avatars.com/api/?background=000&color=fff&name='.str_replace(' ', '+', $user->name);
         }
     }
 
     public function render(): View
     {
-        return view('filament-comments::livewire.comment'); //@phpstan-ignore-line
+        return view('filament-comments::livewire.comment'); // @phpstan-ignore-line
     }
 
     public function form(Form $form): Form
@@ -65,8 +64,9 @@ class Comment extends Component implements HasActions, HasForms
             ->columns(1);
     }
 
-    public function create(){
-        $this->form->validate(); //@phpstan-ignore-line
+    public function create()
+    {
+        $this->form->validate(); // @phpstan-ignore-line
 
         $comment = $this->comment;
 
@@ -90,8 +90,8 @@ class Comment extends Component implements HasActions, HasForms
     {
         return Action::make('Like')
             ->link()
-            ->label(fn() => $this->comment->activities()->where('activity_type', FilamentCommentActivityType::LIKED->value)->count())
-            ->color(fn() => $this->comment->getActivityType() === FilamentCommentActivityType::LIKED->value ? 'success' : 'secondary')
+            ->label(fn () => $this->comment->activities()->where('activity_type', FilamentCommentActivityType::LIKED->value)->count())
+            ->color(fn () => $this->comment->getActivityType() === FilamentCommentActivityType::LIKED->value ? 'success' : 'secondary')
             ->icon('heroicon-s-hand-thumb-up')
             ->action(function () {
                 $comment = $this->comment;
@@ -114,8 +114,8 @@ class Comment extends Component implements HasActions, HasForms
     {
         return Action::make('Dislike')
             ->link()
-            ->label(fn() => $this->comment->activities()->where('activity_type', FilamentCommentActivityType::DISLIKED->value)->count())
-            ->color(fn() => $this->comment->getActivityType() === FilamentCommentActivityType::DISLIKED->value ? 'danger' : 'secondary')
+            ->label(fn () => $this->comment->activities()->where('activity_type', FilamentCommentActivityType::DISLIKED->value)->count())
+            ->color(fn () => $this->comment->getActivityType() === FilamentCommentActivityType::DISLIKED->value ? 'danger' : 'secondary')
             ->icon('heroicon-s-hand-thumb-down')
             ->action(function () {
                 $comment = $this->comment;
@@ -141,6 +141,6 @@ class Comment extends Component implements HasActions, HasForms
             ->tooltip('Reply')
             ->hiddenLabel(true)
             ->icon('heroicon-o-chat-bubble-bottom-center')
-            ->action(fn() => $this->replyingTo = $this->comment->id);
+            ->action(fn () => $this->replyingTo = $this->comment->id);
     }
 }
