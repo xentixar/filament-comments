@@ -21,10 +21,7 @@ class FilamentCommentServiceProvider extends PackageServiceProvider
                     ->publishConfigFile()
                     ->publishMigrations()
                     ->askToRunMigrations();
-            });
-
-        $package
-            ->hasViews()
+            })
             ->hasTranslations()
             ->hasConfigFile([
                 'filament-comments',
@@ -35,9 +32,11 @@ class FilamentCommentServiceProvider extends PackageServiceProvider
             ]);
     }
 
-    public function packageBooted(): void
+    public function boot(): void
     {
-        $this->app->register(\Xentixar\FilamentComment\FilamentCommentServiceProvider::class);
+        parent::boot();
+
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'filament-comments');
 
         Livewire::component('list-comments', \Xentixar\FilamentComment\Livewire\ListComments::class);
         Livewire::component('comment', \Xentixar\FilamentComment\Livewire\Comment::class);
