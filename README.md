@@ -1,5 +1,9 @@
 # Filament Comments
 
+<div align="center">
+    <img src="banner.svg" alt="Filament Comments Banner" width="100%">
+</div>
+
 A powerful comments system for Filament admin panel, allowing you to add commenting functionality to your Filament resources.
 
 ## Features
