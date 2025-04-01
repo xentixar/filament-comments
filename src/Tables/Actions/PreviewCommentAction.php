@@ -5,7 +5,7 @@ namespace Xentixar\FilamentComment\Tables\Actions;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\Action;
 
-class CommentPreview extends Action
+class PreviewCommentAction extends Action
 {
     protected function setUp(): void
     {
@@ -30,6 +30,6 @@ class CommentPreview extends Action
 
     public static function getDefaultName(): ?string
     {
-        return 'addComment';
+        return 'previewComment';
     }
 }

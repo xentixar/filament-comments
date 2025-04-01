@@ -45,10 +45,7 @@ Filament Comments is a robust and feature-rich commenting system designed for bo
 - Supports multiple comment types
 - Built-in migrations and configurations
 - Rich text editor support
-- Comment moderation capabilities
-- User mentions and notifications
 - Comment threading and replies
-- Activity logging and analytics
 
 ## Requirements
 
@@ -98,7 +95,7 @@ class Post extends Model implements Commentable
 To add the comment preview functionality to your Filament resource tables:
 
 ```php
-use Xentixar\FilamentComment\Tables\Actions\CommentPreview;
+use Xentixar\FilamentComment\Tables\Actions\PreviewCommentAction;
 
 class PostResource extends Resource
 {
@@ -111,7 +108,7 @@ class PostResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                CommentPreview::make()
+                PreviewCommentAction::make()
             ]);
     }
 }
@@ -122,7 +119,7 @@ class PostResource extends Resource
 You can also use the comment system in your custom Livewire pages:
 
 ```php
-use Xentixar\FilamentComment\Tables\Actions\CommentPreview;
+use Xentixar\FilamentComment\Tables\Actions\PreviewCommentAction;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 
@@ -137,7 +134,7 @@ class CustomPage extends Component implements HasTable
                 // Your columns...
             ])
             ->actions([
-                CommentPreview::make()
+                PreviewCommentAction::make()
             ]);
     }
 }

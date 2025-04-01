@@ -1,6 +1,6 @@
 {
     "name": "xentixar/filament-comments",
-    "description": "A powerful comments system for Filament admin panel, allowing you to add commenting functionality to your Filament resources.",
+    "description": "A powerful recursive comments system for Filament, allowing you to add nested commenting functionality to your Filament resources and custom Livewire pages.",
     "license": "MIT",
     "type": "library",
     "homepage": "https://github.com/xentixar/filament-comments",
