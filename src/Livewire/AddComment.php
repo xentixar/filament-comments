@@ -23,8 +23,6 @@ class AddComment extends Component implements HasActions, HasForms
 
     public Commentable $record;
 
-    public ?bool $isOpen = false;
-
     public function mount(Commentable $record): void
     {
         $this->record = $record;
@@ -53,7 +51,7 @@ class AddComment extends Component implements HasActions, HasForms
             'user_id' => auth()->id(),
         ]);
 
-        $this->reset(['data', 'isOpen']);
+        $this->reset(['data']);
         $this->dispatch('commentAdded');
         Notification::make()
             ->title('Comment added')
