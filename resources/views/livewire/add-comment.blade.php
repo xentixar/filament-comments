@@ -1,17 +1,8 @@
-<div>
-    @if ($isOpen)
-        <form class="mt-6 space-y-4" wire:submit="create">
-            {{ $this->form }}
-            <x-filament::button type="submit">
-                Add Comment
-            </x-filament::button>
-            <x-filament::button color="danger" type="button" wire:click="$set('isOpen', false)">
-                Cancel
-            </x-filament::button>
-        </form>
-    @else
-        <x-filament::button size="sm" outlined wire:click="$set('isOpen', true)" class="mt-6">
-            {{ __('Add a comment') }}
+<div class="mt-6">
+    <form class="space-y-4">
+        {{ $this->form }}
+        <x-filament::button class="mt-3" wire:click="create">
+            Add Comment
         </x-filament::button>
-    @endif
+    </form>
 </div>

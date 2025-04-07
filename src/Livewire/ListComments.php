@@ -13,17 +13,18 @@ class ListComments extends Component
 
     public Commentable $record;
 
-    public int $offset = 0;
-
     public int $limit = 5;
 
     public bool $showMore = false;
 
     public bool $showLess = false;
+    
+    public int $currentLimit = 5;
 
     public $listeners = [
         'refreshComments' => '$refresh',
         'commentAdded' => 'reloadComments',
+        'commentDeleted' => 'reloadComments',
     ];
 
     /**
@@ -32,9 +33,9 @@ class ListComments extends Component
     public function reloadComments(): void
     {
         $totalComments = $this->getComments();
-        $this->comments = $totalComments->slice($this->offset, $this->limit);
-        $this->showMore = $totalComments->count() > $this->limit;
-        $this->showLess = $this->offset > 0;
+        $this->comments = $totalComments->take($this->currentLimit);
+        $this->showMore = $totalComments->count() > $this->currentLimit;
+        $this->showLess = $this->currentLimit > $this->limit;
     }
 
     /**
@@ -50,32 +51,32 @@ class ListComments extends Component
      */
     public function loadMore(): void
     {
-        $this->offset += $this->limit;
+        $this->currentLimit += $this->limit;
         $totalComments = $this->getComments();
-        $this->comments = $totalComments->slice($this->offset, $this->limit);
-        $this->showMore = $totalComments->count() > ($this->offset + $this->limit);
-        $this->showLess = $this->offset > 0;
+        $this->comments = $totalComments->take($this->currentLimit);
+        $this->showMore = $totalComments->count() > $this->currentLimit;
+        $this->showLess = $this->currentLimit > $this->limit;
     }
 
     /**
-     * Load less comments.
+     * Show less comments.
      */
     public function loadLess(): void
     {
-        $this->offset -= $this->limit;
+        $this->currentLimit = $this->limit;
         $totalComments = $this->getComments();
-        $this->comments = $totalComments->slice($this->offset, $this->limit);
-        $this->showMore = $totalComments->count() > ($this->offset + $this->limit);
-        $this->showLess = $this->offset > 0;
+        $this->comments = $totalComments->take($this->currentLimit);
+        $this->showMore = $totalComments->count() > $this->currentLimit;
+        $this->showLess = false;
     }
 
     public function mount(Commentable $record): void
     {
         $this->record = $record;
         $totalComments = $this->getComments();
-        $this->comments = $totalComments->slice($this->offset, $this->limit);
-        $this->showMore = $totalComments->count() > $this->limit;
-        $this->showLess = $this->offset > 0;
+        $this->comments = $totalComments->take($this->currentLimit);
+        $this->showMore = $totalComments->count() > $this->currentLimit;
+        $this->showLess = false;
     }
 
     public function render(): View

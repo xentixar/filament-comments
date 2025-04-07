@@ -34,6 +34,7 @@ Filament Comments is a robust and feature-rich commenting system designed for bo
 - **Activity Tracking**: Monitor comment interactions and user engagement
 - **Modern UI**: Clean and intuitive interface that matches Filament's design language
 - **Table Support**: Built-in support for Filament tables in both admin and custom pages
+- **Smart Pagination**: Elegant "Show More" and "Show Less" pagination for comments and replies
 
 ## Features
 
@@ -46,6 +47,8 @@ Filament Comments is a robust and feature-rich commenting system designed for bo
 - Built-in migrations and configurations
 - Rich text editor support
 - Comment threading and replies
+- Incremental pagination with "Show More" and "Show Less" controls
+- User mention functionality with notifications
 
 ## Requirements
 
@@ -140,6 +143,76 @@ class CustomPage extends Component implements HasTable
 }
 ```
 
+
+### User Mentions
+
+The comment system supports user mentions with notifications. Users can be mentioned in comments using the `@username` syntax:
+
+```php
+// In your comment
+@john This is a great idea!
+```
+
+When a user is mentioned, they will receive a notification if notifications are enabled in the configuration.
+
+### Adding Username to User Model
+
+To ensure proper display of usernames in comments, you need to make sure your User model has both `name` and `username` attributes. The `name` attribute is used for display purposes, while the `username` attribute is used for mentions.
+
+1. Add both `name` and `username` attributes to your User model if they don't exist:
+
+```php
+// In your User model
+class User extends Authenticatable
+{
+    protected $fillable = [
+        'name',
+        'username',
+        'email',
+        'password',
+        // other fields...
+    ];
+}
+```
+
+2. If you're using different attribute names for the user's display name or username, you can customize this in the configuration:
+
+```php
+// In config/filament-comments.php
+return [
+    'user_model' => \App\Models\User::class,
+    'user_table' => 'users',
+    'mention_column' => 'username', // Change this to your custom username attribute
+    'display_name_column' => 'name', // Change this to your custom display name attribute
+    // other configuration options...
+];
+```
+
+3. If you need to add migrations to add these fields to your users table:
+
+```bash
+php artisan make:migration add_name_and_username_to_users_table
+```
+
+Then in the migration file:
+
+```php
+public function up()
+{
+    Schema::table('users', function (Blueprint $table) {
+        $table->string('name')->nullable()->after('id');
+        $table->string('username')->unique()->after('name');
+    });
+}
+
+public function down()
+{
+    Schema::table('users', function (Blueprint $table) {
+        $table->dropColumn(['name', 'username']);
+    });
+}
+```
+
 ### Configuration
 
 You can publish and customize the configuration file:
@@ -152,30 +225,27 @@ This will publish the configuration file to `config/filament-comments.php`. Here
 
 ```php
 return [
-    'comment' => [
-        // The table name that will be used to store the comments
-        'table' => 'filament_comments',
-    ],
-    'activity' => [
-        // The table name that will be used to store the comment activities
-        'table' => 'filament_comment_activities',
-    ],
-    'user' => [
-        // The model that will be used to store the users
-        'model' => \App\Models\User::class,
-
-        // The table name that will be used to store the users
-        'table' => 'users',
-    ],
+    'comment_table' => 'comments',
+    'comment_activity_table' => 'comment_activities',
+    'user_table' => 'users',
+    'user_model' => \App\Models\User::class,
+    'mention_column' => 'username',
+    'send_notifications' => true,
+    'mention_notification_title' => 'mentioned in a comment!',
+    'display_name_column' => 'name'
 ];
 ```
 
 #### Configuration Options
 
 - **Comment Table**: Customize the table name for storing comments
-- **Activity Table**: Customize the table name for storing comment activities
+- **Comment Activity Table**: Customize the table name for storing comment activities
 - **User Model**: Specify your application's user model
 - **User Table**: Customize the table name for storing users
+- **Mention Column**: Specify which attribute to use for user mentions
+- **Send Notifications**: Enable or disable notifications for user mentions
+- **Mention Notification Title**: Customize the title of mention notifications
+- **Display Name Column**: Specify which attribute to use for displaying user and avatar
 
 ## Contributing
 
