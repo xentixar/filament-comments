@@ -1,14 +1,17 @@
 <div>
+    @php
+        $displayNameColumn = config('filament-comments.display_name_column');
+    @endphp
     <div class="divide-y divide-gray-300/50 my-4">
         <div class="flex items-start gap-2">
             <div class="flex-shrink-0">
-                <img src="{{ $this->getAvatarUrl() }}" alt="{{ $comment->user->name }}"
+                <img src="{{ $this->getAvatarUrl() }}" alt="{{ $comment->user->{$displayNameColumn} }}"
                     class="w-10 h-10 rounded-full object-cover">
             </div>
 
             <div class="flex-1">
                 <div class="flex justify-between items-center">
-                    <p class="text-lg font-semibold dark:text-gray-200 text-gray-900">{{ $comment->user->name }}</p>
+                    <p class="text-lg font-semibold dark:text-gray-200 text-gray-900">{{ $comment->user->{$displayNameColumn} }}</p>
                     <p class="text-xs text-gray-500">{{ $comment->created_at->diffForHumans() }}</p>
                 </div>
 

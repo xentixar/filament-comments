@@ -89,7 +89,8 @@ class Comment extends Component implements HasActions, HasForms
         if (method_exists($user, 'getFilamentAvatarUrl')) {
             return $user->getFilamentAvatarUrl();
         } else {
-            return 'https://ui-avatars.com/api/?background=000&color=fff&name=' . str_replace(' ', '+', $user->name);
+            $displayNameColumn = config('filament-comments.display_name_column');
+            return 'https://ui-avatars.com/api/?background=000&color=fff&name=' . str_replace(' ', '+', $user->{$displayNameColumn});
         }
     }
 
@@ -415,10 +416,12 @@ class Comment extends Component implements HasActions, HasForms
     {
         $authUser = Auth::user();
 
+        $displayNameColumn = config('filament-comments.display_name_column');
+
         $mention_notification_title = config('filament-comments.mention_notification_title');
 
         Notification::make()
-            ->title("{$authUser->name} {$mention_notification_title}")
+            ->title("{$authUser->{$displayNameColumn}} {$mention_notification_title}")
             ->body(Str::limit($this->comment->body, 200))
             ->success()
             ->sendToDatabase($mentions);

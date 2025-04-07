@@ -61,5 +61,13 @@ return [
     |--------------------------------------------------------------------------
     | The title of the notification that will be sent when a user is mentioned
     */
-    'mention_notification_title' => 'mentioned in a comment!'
+    'mention_notification_title' => 'mentioned in a comment!',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Display Name Column
+    |--------------------------------------------------------------------------
+    | The column that will be used to display the user's name
+    */
+    'display_name_column' => 'name',
 ];
