@@ -33,12 +33,14 @@
                     </form>
                 @endif
 
-                @if ($comment->replies->count())
-                    <div class="mt-6 space-y-4 pl-6">
-                        @foreach ($comment->replies as $reply)
-                            @livewire('comment', ['comment' => $reply], key($reply->id))
-                        @endforeach
-                    </div>
+                @if ($hasReplies)
+                    @if ($comment->replies->count())
+                        <div class="mt-6 space-y-4 pl-6">
+                            @foreach ($replies as $reply)
+                                @livewire('comment', ['comment' => $reply, 'hasReplies' => false], key($reply->id))
+                            @endforeach
+                        </div>
+                    @endif
                 @endif
             </div>
         </div>

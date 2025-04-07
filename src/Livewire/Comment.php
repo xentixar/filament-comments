@@ -13,12 +13,15 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 use Xentixar\FilamentComment\Enums\FilamentCommentActivityType;
 use Xentixar\FilamentComment\Models\FilamentComment;
 use Illuminate\Support\Str;
+use Livewire\Attributes\On;
 
 class Comment extends Component implements HasActions, HasForms
 {
@@ -32,9 +35,21 @@ class Comment extends Component implements HasActions, HasForms
 
     public FilamentComment $comment;
 
-    public function mount(FilamentComment $comment): void
+    public SupportCollection $replies;
+
+    public bool $hasReplies = true;
+
+    #[On('reloadReplies')]
+    public function reloadReplies(): void
+    {
+        $this->replies = $this->getFlatReplies();
+    }
+
+    public function mount(FilamentComment $comment, bool $hasReplies = true): void
     {
         $this->comment = $comment;
+        $this->hasReplies = $hasReplies;
+        $this->replies = $this->getFlatReplies();
     }
 
     public function getAvatarUrl(): string
@@ -96,6 +111,8 @@ class Comment extends Component implements HasActions, HasForms
         }
 
         $this->reset(['data', 'replyingTo']);
+
+        $this->dispatch('reloadReplies');
     }
 
     public function likeAction(): Action
@@ -155,6 +172,24 @@ class Comment extends Component implements HasActions, HasForms
             ->icon('heroicon-o-chat-bubble-bottom-center')
             ->action(fn() => $this->replyingTo = $this->comment->id);
     }
+
+    private function getFlatReplies(): SupportCollection
+    {
+        $replies = collect();
+        $this->flattenReplies($this->comment->replies()->get(), $replies);
+        return $replies;
+    }
+
+    private function flattenReplies(Collection $replies, SupportCollection &$flatReplies): void
+    {
+        foreach ($replies as $reply) {
+            $flatReplies->push($reply);
+            if ($reply->replies->isNotEmpty()) {
+                $this->flattenReplies($reply->replies, $flatReplies);
+            }
+        }
+    }
+
 
     private function appendMentionToBody(string $body): string
     {
