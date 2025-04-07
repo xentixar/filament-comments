@@ -157,7 +157,8 @@ class Comment extends Component implements HasActions, HasForms
         $mention_column = config('filament-comments.mention_column');
 
         foreach ($addedMentions as $mention) {
-            $user = User::query()->where($mention_column, $mention)->first();
+            $userModel = config('filament-comments.user_model');
+            $user = $userModel::query()->where($mention_column, $mention)->first();
             if ($user) {
                 $validMentions[] = $user;
             }
@@ -352,7 +353,8 @@ class Comment extends Component implements HasActions, HasForms
                 foreach ($parts as $part) {
                     if (preg_match('/^@[\w.]+$/', $part)) {
                         $partWithoutAt = str_replace('@', '', $part);
-                        $user = User::query()->where($mention_column, $partWithoutAt)->first();
+                        $userModel = config('filament-comments.user_model');
+                        $user = $userModel::query()->where($mention_column, $partWithoutAt)->first();
 
                         if ($user) {
                             $u = $dom->createElement('u', $part);
@@ -398,7 +400,8 @@ class Comment extends Component implements HasActions, HasForms
         $mention_column = config('filament-comments.mention_column');
 
         foreach ($usernames as $username) {
-            $user = User::query()->where($mention_column, $username)->first();
+            $userModel = config('filament-comments.user_model');
+            $user = $userModel::query()->where($mention_column, $username)->first();
 
             if ($user && $user->id !== $authUser->id) {
                 $mentions[] = $user;
@@ -437,7 +440,8 @@ class Comment extends Component implements HasActions, HasForms
             $firstChild = $firstP->firstChild;
 
             if ($firstChild && $firstChild->nodeName === 'u' && preg_match('/^@[\w.]+$/', $firstChild->nodeValue)) {
-                $user = User::query()->where($mention_column, str_replace('@', '', $firstChild->nodeValue))->first();
+                $userModel = config('filament-comments.user_model');
+                $user = $userModel::query()->where($mention_column, str_replace('@', '', $firstChild->nodeValue))->first();
                 if ($user) {
                     $firstP->removeChild($firstChild);
                 }
@@ -469,7 +473,8 @@ class Comment extends Component implements HasActions, HasForms
         $validMentions = [];
 
         foreach ($usernames as $username) {
-            $user = User::query()->where($mention_column, $username)->first();
+            $userModel = config('filament-comments.user_model');
+            $user = $userModel::query()->where($mention_column, $username)->first();
             if ($user) {
                 $validMentions[] = $username;
             }
