@@ -38,18 +38,43 @@ class Comment extends Component implements HasActions, HasForms
     public SupportCollection $replies;
 
     public bool $hasReplies = true;
+    
+    public bool $pagination = false;
+    
+    public int $limit = 5;
+    
+    public bool $showMore = false;
+    
+    public bool $showLess = false;
+    
+    public int $currentLimit = 5;
 
     #[On('reloadReplies')]
     public function reloadReplies(): void
     {
         $this->replies = $this->getFlatReplies();
+        
+        if ($this->pagination) {
+            $totalReplies = $this->replies->count();
+            $this->replies = $this->replies->take($this->currentLimit);
+            $this->showMore = $totalReplies > $this->currentLimit;
+            $this->showLess = $this->currentLimit > $this->limit;
+        }
     }
 
-    public function mount(FilamentComment $comment, bool $hasReplies = true): void
+    public function mount(FilamentComment $comment, bool $hasReplies = true, bool $pagination = false): void
     {
         $this->comment = $comment;
         $this->hasReplies = $hasReplies;
+        $this->pagination = $pagination;
         $this->replies = $this->getFlatReplies();
+        
+        if ($this->pagination) {
+            $totalReplies = $this->replies->count();
+            $this->replies = $this->replies->take($this->currentLimit);
+            $this->showMore = $totalReplies > $this->currentLimit;
+            $this->showLess = $this->currentLimit > $this->limit;
+        }
     }
 
     public function getAvatarUrl(): string
@@ -171,6 +196,30 @@ class Comment extends Component implements HasActions, HasForms
             ->hiddenLabel(true)
             ->icon('heroicon-o-chat-bubble-bottom-center')
             ->action(fn() => $this->replyingTo = $this->comment->id);
+    }
+    
+    /**
+     * Load more replies.
+     */
+    public function loadMore(): void
+    {
+        $this->currentLimit += $this->limit;
+        $totalReplies = $this->getFlatReplies();
+        $this->replies = $totalReplies->take($this->currentLimit);
+        $this->showMore = $totalReplies->count() > $this->currentLimit;
+        $this->showLess = $this->currentLimit > $this->limit;
+    }
+
+    /**
+     * Show less replies.
+     */
+    public function loadLess(): void
+    {
+        $this->currentLimit = $this->limit;
+        $totalReplies = $this->getFlatReplies();
+        $this->replies = $totalReplies->take($this->currentLimit);
+        $this->showMore = $totalReplies->count() > $this->currentLimit;
+        $this->showLess = false;
     }
 
     private function getFlatReplies(): SupportCollection
