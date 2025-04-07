@@ -252,6 +252,23 @@ class Comment extends Component implements HasActions, HasForms
             });
     }
 
+    public function deleteAction(): Action
+    {
+        return Action::make('Delete')
+            ->link()
+            ->tooltip('Delete')
+            ->hiddenLabel(true)
+            ->color('danger')
+            ->icon('heroicon-s-trash')
+            ->visible(fn() => $this->comment->user_id === Auth::id())
+            ->requiresConfirmation()
+            ->action(function () {
+                $this->comment->delete();
+                $this->dispatch('commentDeleted');
+                $this->dispatch('reloadReplies');
+            });
+    }
+
     public function loadMore(): void
     {
         $this->currentLimit += $this->limit;

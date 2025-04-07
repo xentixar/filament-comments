@@ -19,6 +19,7 @@
                         {{ $this->dislikeAction() }}
                         {{ $this->replyAction() }}
                         {{ $this->editAction() }}
+                        {{ $this->deleteAction() }}
                     </div>
                 </div>
 

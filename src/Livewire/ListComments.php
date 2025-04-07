@@ -24,6 +24,7 @@ class ListComments extends Component
     public $listeners = [
         'refreshComments' => '$refresh',
         'commentAdded' => 'reloadComments',
+        'commentDeleted' => 'reloadComments',
     ];
 
     /**
