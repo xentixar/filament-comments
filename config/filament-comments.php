@@ -16,4 +16,29 @@ return [
         // The table name that will be used to store the users
         'table' => 'users',
     ],
+    /*
+    |--------------------------------------------------------------------------
+    | Mention Column
+    |--------------------------------------------------------------------------
+    | The column that will be used to mention the user
+    |
+    */
+    'mention_column' => 'username',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Send Notifications
+    |--------------------------------------------------------------------------
+    | Whether to send notifications when a user is mentioned
+    |
+    */
+    'send_notifications' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Mention Notification Title
+    |--------------------------------------------------------------------------
+    | The title of the notification that will be sent when a user is mentioned
+    */
+    'mention_notification_title' => 'mentioned in a comment!'
 ];

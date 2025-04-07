@@ -1,11 +1,8 @@
-<div>
-    <form class="mt-6 space-y-4" wire:submit="create">
+<div class="mt-6">
+    <form class="space-y-4">
         {{ $this->form }}
-        <x-filament::button type="submit">
+        <x-filament::button wire:click="create">
             Add Comment
-        </x-filament::button>
-        <x-filament::button color="danger" type="button" wire:click="$set('isOpen', false)">
-            Cancel
         </x-filament::button>
     </form>
 </div>
