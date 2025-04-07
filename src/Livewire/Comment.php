@@ -409,7 +409,9 @@ class Comment extends Component implements HasActions, HasForms
             }
         }
 
-        $mentions = collect($mentions)->unique();
+        $mentions = collect($mentions)->unique()->all();
+
+        $this->sendMentionNotification($mentions);
     }
 
     private function sendMentionNotification(array $mentions): void
