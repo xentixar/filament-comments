@@ -79,7 +79,7 @@ class Comment extends Component implements HasActions, HasForms
         $body = $this->appendMentionToBody($this->data['body']);
 
         $comment->replies()->create([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'body' => $body,
             'parent_id' => $this->replyingTo,
             'commentable_id' => $comment->commentable_id,
@@ -236,10 +236,12 @@ class Comment extends Component implements HasActions, HasForms
         foreach ($usernames as $username) {
             $user = User::query()->where($mention_column, $username)->first();
 
-            if ($user) {
+            if ($user && $user->id !== $authUser->id) {
                 $mentions[] = $user;
             }
         }
+
+        $mentions = collect($mentions)->unique();
 
         $mention_notification_title = config('filament-comments.mention_notification_title');
 

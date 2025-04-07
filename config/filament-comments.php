@@ -1,21 +1,42 @@
 <?php
 
 return [
-    'comment' => [
-        // The table name that will be used to store the comments
-        'table' => 'filament_comments',
-    ],
-    'activity' => [
-        // The table name that will be used to store the comment activities
-        'table' => 'filament_comment_activities',
-    ],
-    'user' => [
-        // The model that will be used to store the users
-        'model' => \App\Models\User::class,
+    /*
+    |--------------------------------------------------------------------------
+    | Comment Table
+    |--------------------------------------------------------------------------
+    | The table that will be used to store the comments
+    |
+    */
+    'comment_table' => 'comments',
 
-        // The table name that will be used to store the users
-        'table' => 'users',
-    ],
+    /*
+    |--------------------------------------------------------------------------
+    | Comment Activity Table
+    |--------------------------------------------------------------------------
+    | The table that will be used to store the comment activities
+    |
+    */
+    'comment_activity_table' => 'comment_activities',
+
+    /*
+    |--------------------------------------------------------------------------
+    | User Table
+    |--------------------------------------------------------------------------
+    | The table that will be used to bind the comment to a user
+    |
+    */
+    'user_table' => 'users',
+
+    /*
+    |--------------------------------------------------------------------------
+    | User Model
+    |--------------------------------------------------------------------------
+    | The model that will be used to bind the comment to a user
+    |
+    */
+    'user_model' => \App\Models\User::class,
+
     /*
     |--------------------------------------------------------------------------
     | Mention Column

@@ -27,7 +27,7 @@ class FilamentComment extends Model
     {
         parent::__construct();
 
-        $this->setTable(config('filament-comments.comment.table', 'filament_comments'));
+        $this->setTable(config('filament-comments.comment_table', 'comments'));
     }
 
     protected $fillable = [
@@ -45,7 +45,7 @@ class FilamentComment extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(config('filament-comments.user.model', \App\Models\User::class));
+        return $this->belongsTo(config('filament-comments.user_model', \App\Models\User::class));
     }
 
     public function parent(): BelongsTo

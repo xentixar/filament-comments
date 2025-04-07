@@ -8,12 +8,12 @@ return new class extends Migration{
   
     public function up(): void
     {
-        Schema::create(config('filament-comments.comment.table', 'filament_comments'), function (Blueprint $table) {
+        Schema::create(config('filament-comments.comment_table', 'comments'), function (Blueprint $table) {
             $table->id();
             $table->text('body');
             $table->morphs('commentable');
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('parent_id')->nullable()->constrained(config('filament-comments.comment.table', 'filament_comments'))->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained(config('filament-comments.user_table', 'users'), 'id')->cascadeOnDelete();
+            $table->foreignId('parent_id')->nullable()->constrained(config('filament-comments.comment_table', 'comments'), 'id')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -21,6 +21,6 @@ return new class extends Migration{
   
     public function down(): void
     {
-        Schema::dropIfExists(config('filament-comments.comment.table', 'filament_comments'));
+        Schema::dropIfExists(config('filament-comments.comment_table', 'comments'));
     }
 };
