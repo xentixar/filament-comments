@@ -13,6 +13,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Support\Colors\Color;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
@@ -33,27 +34,31 @@ class Comment extends Component implements HasActions, HasForms
 
     public ?int $replyingTo = null;
 
+    public ?int $editing = null;
+
     public FilamentComment $comment;
 
     public SupportCollection $replies;
 
     public bool $hasReplies = true;
-    
+
     public bool $pagination = false;
-    
+
     public int $limit = 5;
-    
+
     public bool $showMore = false;
-    
+
     public bool $showLess = false;
-    
+
     public int $currentLimit = 5;
+
+    public array $oldMentions = [];
 
     #[On('reloadReplies')]
     public function reloadReplies(): void
     {
         $this->replies = $this->getFlatReplies();
-        
+
         if ($this->pagination) {
             $totalReplies = $this->replies->count();
             $this->replies = $this->replies->take($this->currentLimit);
@@ -68,7 +73,7 @@ class Comment extends Component implements HasActions, HasForms
         $this->hasReplies = $hasReplies;
         $this->pagination = $pagination;
         $this->replies = $this->getFlatReplies();
-        
+
         if ($this->pagination) {
             $totalReplies = $this->replies->count();
             $this->replies = $this->replies->take($this->currentLimit);
@@ -126,16 +131,43 @@ class Comment extends Component implements HasActions, HasForms
             'commentable_type' => $comment->commentable_type,
         ]);
 
-        Notification::make()
-            ->title('Comment added')
-            ->success()
-            ->send();
-
         if (config('filament-comments.send_notifications')) {
             $this->mentionUser($body);
         }
 
         $this->reset(['data', 'replyingTo']);
+
+        $this->dispatch('reloadReplies');
+    }
+
+    public function update(): void
+    {
+        $this->form->validate(); // @phpstan-ignore-line
+
+        $body = $this->appendMentionToBody($this->data['body'], true);
+
+        $this->comment->update(['body' => $body]);
+
+        $newMentions = $this->extractMentions($this->data['body']);
+
+        $addedMentions = array_diff($newMentions, $this->oldMentions);
+
+        $validMentions = [];
+
+        $mention_column = config('filament-comments.mention_column');
+
+        foreach ($addedMentions as $mention) {
+            $user = User::query()->where($mention_column, $mention)->first();
+            if ($user) {
+                $validMentions[] = $user;
+            }
+        }
+
+        if (count($validMentions) > 0) {
+            $this->sendMentionNotification($validMentions);
+        }
+
+        $this->reset(['data', 'editing']);
 
         $this->dispatch('reloadReplies');
     }
@@ -194,13 +226,32 @@ class Comment extends Component implements HasActions, HasForms
             ->link()
             ->tooltip('Reply')
             ->hiddenLabel(true)
-            ->icon('heroicon-o-chat-bubble-bottom-center')
+            ->color('white')
+            ->icon('heroicon-s-chat-bubble-bottom-center')
             ->action(fn() => $this->replyingTo = $this->comment->id);
     }
-    
-    /**
-     * Load more replies.
-     */
+
+    public function editAction(): Action
+    {
+        return Action::make('Edit')
+            ->link()
+            ->tooltip('Edit')
+            ->hiddenLabel(true)
+            ->color(fn() => $this->comment->user_id === Auth::id() ? Color::rgb('rgb(82,82,91)') : Color::Hex('#6b7280'))
+            ->icon('heroicon-s-pencil-square')
+            ->visible(fn() => $this->comment->user_id === Auth::id())
+            ->action(function () {
+                $this->editing = $this->comment->id;
+
+                $originalBody = $this->comment->body;
+                $cleanBody = $this->removeInitialMention($originalBody);
+
+                $this->oldMentions = $this->extractMentions($cleanBody);
+
+                $this->data['body'] = $cleanBody;
+            });
+    }
+
     public function loadMore(): void
     {
         $this->currentLimit += $this->limit;
@@ -210,9 +261,6 @@ class Comment extends Component implements HasActions, HasForms
         $this->showLess = $this->currentLimit > $this->limit;
     }
 
-    /**
-     * Show less replies.
-     */
     public function loadLess(): void
     {
         $this->currentLimit = $this->limit;
@@ -220,6 +268,11 @@ class Comment extends Component implements HasActions, HasForms
         $this->replies = $totalReplies->take($this->currentLimit);
         $this->showMore = $totalReplies->count() > $this->currentLimit;
         $this->showLess = false;
+    }
+
+    public function cancel(): void
+    {
+        $this->reset(['data', 'replyingTo', 'editing']);
     }
 
     private function getFlatReplies(): SupportCollection
@@ -239,11 +292,21 @@ class Comment extends Component implements HasActions, HasForms
         }
     }
 
-
-    private function appendMentionToBody(string $body): string
+    private function appendMentionToBody(string $body, bool $isEditing = false): string
     {
         $mention_column = config('filament-comments.mention_column');
-        $mention = "@{$this->comment->user->{$mention_column}}";
+
+        if ($isEditing) {
+            $parent = $this->comment->parent;
+            if ($parent) {
+                $mention = "@{$parent->user->{$mention_column}}";
+            } else {
+                $mention = "";
+                return $body;
+            }
+        } else {
+            $mention = "@{$this->comment->user->{$mention_column}}";
+        }
 
         $dom = new DOMDocument();
         libxml_use_internal_errors(true);
@@ -257,7 +320,7 @@ class Comment extends Component implements HasActions, HasForms
             $uTag = $dom->createElement('u', $mention);
             $uTag->setAttribute('class', 'text-primary-500');
 
-            $space = $dom->createTextNode(' ');
+            $space = $dom->createTextNode('');
             $firstP->insertBefore($space, $firstP->firstChild);
             $firstP->insertBefore($uTag, $space);
         }
@@ -326,6 +389,11 @@ class Comment extends Component implements HasActions, HasForms
         }
 
         $mentions = collect($mentions)->unique();
+    }
+
+    private function sendMentionNotification(array $mentions): void
+    {
+        $authUser = Auth::user();
 
         $mention_notification_title = config('filament-comments.mention_notification_title');
 
@@ -334,5 +402,62 @@ class Comment extends Component implements HasActions, HasForms
             ->body(Str::limit($this->comment->body, 200))
             ->success()
             ->sendToDatabase($mentions);
+    }
+
+    private function removeInitialMention(string $body): string
+    {
+        $mention_column = config('filament-comments.mention_column');
+
+        $dom = new \DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML(mb_convert_encoding($body, 'HTML-ENTITIES', 'UTF-8'));
+        libxml_clear_errors();
+
+        $pTags = $dom->getElementsByTagName('p');
+
+        if ($pTags->length > 0) {
+            $firstP = $pTags->item(0);
+            $firstChild = $firstP->firstChild;
+
+            if ($firstChild && $firstChild->nodeName === 'u' && preg_match('/^@[\w.]+$/', $firstChild->nodeValue)) {
+                $user = User::query()->where($mention_column, str_replace('@', '', $firstChild->nodeValue))->first();
+                if ($user) {
+                    $firstP->removeChild($firstChild);
+                }
+            }
+        }
+
+        $html = $dom->saveHTML();
+        $start = strpos($html, '<body>') + 6;
+        $end = strpos($html, '</body>');
+
+        return trim(substr($html, $start, $end - $start));
+    }
+
+    private function extractMentions(string $body): array
+    {
+        $mention_column = config('filament-comments.mention_column');
+
+        $dom = new \DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML(mb_convert_encoding($body, 'HTML-ENTITIES', 'UTF-8'));
+        libxml_clear_errors();
+
+        $textContent = $dom->textContent;
+
+        preg_match_all('/@([\w.]+)/', $textContent, $matches);
+
+        $usernames = array_unique($matches[1]);
+
+        $validMentions = [];
+
+        foreach ($usernames as $username) {
+            $user = User::query()->where($mention_column, $username)->first();
+            if ($user) {
+                $validMentions[] = $username;
+            }
+        }
+
+        return $validMentions;
     }
 }
